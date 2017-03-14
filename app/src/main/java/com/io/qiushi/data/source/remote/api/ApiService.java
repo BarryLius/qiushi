@@ -11,6 +11,7 @@ import retrofit2.http.Path;
  */
 
 public interface ApiService {
+    //
     public static final String API_URL = "http://www.qiumeimei.com/";
 
     /**
