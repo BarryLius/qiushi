@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
@@ -51,9 +53,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        int[] array = new int[]{R.array.colors};
+        int[] array = new int[]{
+                R.color.accent,
+                R.color.primary_text
+        };
+
         if (position % 3 == 0) {
-            holder.mImageView.setBackground(mContext.getDrawable(R.color.secondary_text));
+            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
         } else {
             holder.mImageView.setBackground(mContext.getDrawable(R.color.icons));
         }
@@ -74,12 +80,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                             holder.mImageView.setForeground(gifBadge);
                             holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
                         }
+
                         return false;
                     }
                 })
                 .override(800, 600)
                 .crossFade()
-                .into(holder.mImageView);
+//                .into(holder.mImageView);
+                .into(new GlideDrawableImageViewTarget(holder.mImageView) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable>
+                            animation) {
+                        super.onResourceReady(resource, animation);
+                        resource.stop();
+                    }
+                });
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -102,6 +117,25 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                     }
                 }
             });
+
+//            mImageView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (mImageView.getDrawable() instanceof GifDrawable) {
+//                        gif = (GifDrawable) mImageView.getDrawable();
+//                        switch (event.getAction()) {
+//                            case MotionEvent.ACTION_DOWN:
+//                                gif.start();
+//                                break;
+//                            case MotionEvent.ACTION_UP:
+//                            case MotionEvent.ACTION_CANCEL:
+//                                gif.stop();
+//                                break;
+//                        }
+//                    }
+//                    return false;
+//                }
+//            });
         }
     }
 }
