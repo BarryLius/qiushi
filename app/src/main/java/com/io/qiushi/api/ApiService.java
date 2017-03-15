@@ -1,4 +1,4 @@
-package com.io.qiushi.data.source.remote.api;
+package com.io.qiushi.api;
 
 import android.support.annotation.NonNull;
 

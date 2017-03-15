@@ -1,6 +1,6 @@
 package com.io.qiushi.util;
 
-import com.io.qiushi.data.source.remote.api.ApiService;
+import com.io.qiushi.api.ApiService;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
