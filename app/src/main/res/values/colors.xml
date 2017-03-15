@@ -12,4 +12,13 @@
     <color name="secondary_text">#757575</color>
     <color name="icons">#212121</color>
     <color name="divider">#BDBDBD</color>
+
+    <array name="colors">
+        <item>#202020</item>
+        <item>#222222</item>
+        <item>#191919</item>
+        <item>#212121</item>
+        <item>#232323</item>
+        <item>#000000</item>
+    </array>
 </resources>

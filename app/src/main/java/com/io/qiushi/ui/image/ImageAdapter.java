@@ -51,6 +51,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        int[] array = new int[]{R.array.colors};
+        if (position % 3 == 0) {
+            holder.mImageView.setBackground(mContext.getDrawable(R.color.secondary_text));
+        } else {
+            holder.mImageView.setBackground(mContext.getDrawable(R.color.icons));
+        }
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
