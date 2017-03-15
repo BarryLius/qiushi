@@ -52,7 +52,33 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     private void initView() {
         srlRefresh.setOnRefreshListener(this);
-        rvData.setLayoutManager(new GridLayoutManager(mContext, 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 2);
+        rvData.setLayoutManager(gridLayoutManager);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (position == adapter.getItemCount() - 1) {
+                    return 2;
+                }
+                return 1;
+            }
+        });
+        rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    toolbar.setTranslationZ(10f);
+                } else {
+                    toolbar.setTranslationZ(0f);
+                }
+            }
+        });
     }
 
     private void initData() {
