@@ -27,9 +27,9 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_data"
-                android:background="@color/icons"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:background="@color/icons"/>
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar

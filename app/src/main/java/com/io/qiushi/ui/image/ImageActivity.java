@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,6 +23,7 @@ import butterknife.ButterKnife;
 public class ImageActivity extends AppCompatActivity implements ImageContract.View, SwipeRefreshLayout
         .OnRefreshListener {
     private static final String TAG = "ImageActivity";
+    private final int RV_COLUMN = 2;
 
     private Context mContext;
     @BindView(R.id.toolbar)
@@ -36,7 +38,11 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     ImageContract.Presenter mPresenter;
     private int page = 1;
 
-    ImageAdapter adapter;
+    ImageAdapter2 adapter;
+    GridLayoutManager gridLayoutManager;
+    int lastVisibleItem;
+    List<Image> tempList = new ArrayList<>();
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +58,8 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     private void initView() {
         srlRefresh.setOnRefreshListener(this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 2);
+        gridLayoutManager = new GridLayoutManager(mContext, RV_COLUMN);
         rvData.setLayoutManager(gridLayoutManager);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if (position == adapter.getItemCount() - 1) {
-                    return 2;
-                }
-                return 1;
-            }
-        });
         rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -79,10 +76,71 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
                 }
             }
         });
+        rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && (lastVisibleItem + 1) == adapter.getItemCount()) {
+                    if (!isLoading) {
+                        isLoading = true;
+                        //load
+                        adapter.startLoading();
+                        Log.e(TAG, "loading...");
+                        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                            @Override
+                            public int getSpanSize(int position) {
+                                if (position == adapter.getLoadingItemPosition()) {
+                                    return RV_COLUMN;
+                                }
+                                return 1;
+                            }
+                        });
+                        //
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        isLoading = false;
+                                        List<Image> list = new ArrayList<Image>();
+                                        Image i = new Image();
+                                        i.setSrc("https://ss0.bdstatic" +
+                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
+                                        list.add(i);
+                                        Image i2 = new Image();
+                                        i2.setSrc("https://ss0.bdstatic" +
+                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
+                                        list.add(i2);
+                                        Image i3 = new Image();
+                                        i3.setSrc("https://ss0.bdstatic" +
+                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
+                                        list.add(i3);
+                                        adapter.finishLoading();
+                                        tempList.addAll(list);
+                                        adapter.notifyItemRangeInserted(adapter.getItemCount(), list.size());
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+            }
+        });
     }
 
     private void initData() {
-        adapter = new ImageAdapter(mContext, null);
+        adapter = new ImageAdapter2(mContext, null);
         rvData.setAdapter(adapter);
         mPresenter.getData(page);
     }
@@ -110,7 +168,8 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     @Override
     public void setData(List<Image> list) {
         Log.e(TAG, ">>" + list.size());
-        adapter = new ImageAdapter(mContext, list);
+        tempList.addAll(list);
+        adapter = new ImageAdapter2(mContext, tempList);
         rvData.setAdapter(adapter);
     }
 

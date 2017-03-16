@@ -30,6 +30,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static final int TYPE_FOOTER = 2;
     private Context mContext;
     private List<Image> list;
+    private boolean showLoadMore = false;
 
     public ImageAdapter2(Context context, List<Image> list) {
         mContext = context;
@@ -40,14 +41,25 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_CONTENT) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_image, parent, false);
-            ViewHolder viewHolder = new ViewHolder(view);
-            return viewHolder;
+            return new ViewHolder(view);
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_loading, parent, false);
-            LoadingMoreHolder loadingMoreHolder = new LoadingMoreHolder(view);
-            return loadingMoreHolder;
+            return new LoadingMoreHolder(view);
         }
         return null;
+    }
+
+    @Override
+    public int getItemCount() {
+        return list == null ? 0 : list.size() + (showLoadMore ? 1 : 0);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position < list.size() && list.size() > 0) {
+            return TYPE_CONTENT;
+        }
+        return TYPE_FOOTER;
     }
 
     @Override
@@ -60,6 +72,28 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 bindLoadingHolder((LoadingMoreHolder) holder, position);
                 break;
         }
+    }
+
+    public void startLoading() {
+        if (showLoadMore)
+            return;
+        showLoadMore = true;
+        notifyItemInserted(getLoadingItemPosition());
+    }
+
+    public void finishLoading() {
+        if (!showLoadMore)
+            return;
+        //必须先remove,再设置showLoadMore为false
+        notifyItemRemoved(getLoadingItemPosition());
+        showLoadMore = false;
+    }
+
+    public int getLoadingItemPosition() {
+        if (showLoadMore) {
+            return getItemCount() - 1;
+        }
+        return RecyclerView.NO_POSITION;
     }
 
     private void bindViewHolders(ViewHolder holder, int position) {
@@ -107,17 +141,19 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.progress.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public int getItemCount() {
-        return list == null ? 0 : list.size() + 1;
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.image);
+
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finishLoading();
+                }
+            });
         }
     }
 
