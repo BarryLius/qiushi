@@ -103,9 +103,15 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void bindViewHolders(final ViewHolder holder, final int position) {
         int[] array = new int[]{
-                R.color.accent,
-                R.color.primary_text
+                R.color.black,
+                R.color.divider
         };
+
+        if (position % 3 == 0) {
+            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
+        } else {
+            holder.mImageView.setBackground(mContext.getDrawable(array[1]));
+        }
 
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
@@ -128,8 +134,8 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                 })
                 .override(800, 600)
-                .placeholder(new ColorDrawable(array[1]))
-                //.into(holder.mImageView);
+                .placeholder(new ColorDrawable(array[0]))
+                .crossFade()
                 .into(new GlideDrawableImageViewTarget(holder.mImageView) {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable>
@@ -138,11 +144,6 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //                        resource.stop();
                     }
                 });
-        if (position % 3 == 0) {
-            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
-        } else {
-            holder.mImageView.setBackground(mContext.getDrawable(R.color.divider));
-        }
 
     }
 
