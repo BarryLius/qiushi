@@ -41,8 +41,9 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     ImageAdapter2 adapter;
     GridLayoutManager gridLayoutManager;
     int lastVisibleItem;
-    List<Image> tempList = new ArrayList<>();
     private boolean isLoading = false;
+
+    private List<Image> tempList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +63,11 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         rvData.setLayoutManager(gridLayoutManager);
         rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-
-            @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                    toolbar.setTranslationZ(10f);
-                } else {
-                    toolbar.setTranslationZ(0f);
+                if (adapter == null) {
+                    return;
                 }
-            }
-        });
-        rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE && (lastVisibleItem + 1) == adapter.getItemCount()) {
                     if (!isLoading) {
                         isLoading = true;
@@ -95,38 +83,10 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
                                 return 1;
                             }
                         });
+                        rvData.scrollToPosition(adapter.getItemCount());
                         //
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        isLoading = false;
-                                        List<Image> list = new ArrayList<Image>();
-                                        Image i = new Image();
-                                        i.setSrc("https://ss0.bdstatic" +
-                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
-                                        list.add(i);
-                                        Image i2 = new Image();
-                                        i2.setSrc("https://ss0.bdstatic" +
-                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
-                                        list.add(i2);
-                                        Image i3 = new Image();
-                                        i3.setSrc("https://ss0.bdstatic" +
-                                                ".com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png");
-                                        list.add(i3);
-                                        adapter.finishLoading();
-                                        tempList.addAll(list);
-                                        adapter.notifyItemRangeInserted(adapter.getItemCount(), list.size());
-                                    }
-                                });
-                            }
-                        }).start();
+                        page++;
+                        mPresenter.getData(page);
                     }
                 }
             }
@@ -169,12 +129,21 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     public void setData(List<Image> list) {
         Log.e(TAG, ">>" + list.size());
         tempList.addAll(list);
-        adapter = new ImageAdapter2(mContext, tempList);
-        rvData.setAdapter(adapter);
+        if (adapter.getItemCount() <= 0) {
+            adapter = new ImageAdapter2(mContext, tempList);
+            rvData.setAdapter(adapter);
+        } else {
+            adapter.notifyItemRangeInserted(adapter.getItemCount(), list.size());
+            isLoading = false;
+            adapter.finishLoading();
+        }
     }
 
     @Override
     public void onRefresh() {
+        adapter = new ImageAdapter2(mContext, null);
+        tempList = new ArrayList<>();
+        page = 1;
         mPresenter.getData(page);
     }
 }

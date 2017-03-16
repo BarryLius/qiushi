@@ -3,9 +3,7 @@ package com.io.qiushi.ui.image;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.io.qiushi.api.ApiService;
 import com.io.qiushi.bean.Image;
 import com.io.qiushi.util.NetworkUtils;
@@ -42,14 +40,16 @@ public class ImagePresenter implements ImageContract.Presenter {
 //            return;
 //        }
 
-        mView.setLoading();
+        if (page == 1) {
+            mView.setLoading();
+        }
         NetworkUtils.getInstance()
                 .create(ApiService.class)
                 .getImageData(page)
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        Log.e("图片json", ">>" + new Gson().toJson(response.body()));
+//                        Log.e("图片json", ">>" + new Gson().toJson(response.body()));
                         if (response.isSuccessful()) {
                             List<Image> list = string2Object(response.body().toString());
                             mView.setData(list);

@@ -1,9 +1,11 @@
 package com.io.qiushi.ui.image;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +14,14 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
+import com.io.qiushi.util.GifBadge;
 
 import java.util.List;
 
@@ -31,20 +35,25 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context mContext;
     private List<Image> list;
     private boolean showLoadMore = false;
+    GifBadge gifBadge;
+    GifDrawable gif = null;
 
     public ImageAdapter2(Context context, List<Image> list) {
         mContext = context;
         this.list = list;
+        gifBadge = new GifBadge(mContext);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_CONTENT) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_image, parent, false);
-            return new ViewHolder(view);
+            ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
         } else if (viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_loading, parent, false);
-            return new LoadingMoreHolder(view);
+            LoadingMoreHolder loadingMoreHolder = new LoadingMoreHolder(view);
+            return loadingMoreHolder;
         }
         return null;
     }
@@ -56,7 +65,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        if (position < list.size() && list.size() > 0) {
+        if (list.size() > 0 && list.size() > position) {
             return TYPE_CONTENT;
         }
         return TYPE_FOOTER;
@@ -84,29 +93,20 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void finishLoading() {
         if (!showLoadMore)
             return;
-        //必须先remove,再设置showLoadMore为false
-        notifyItemRemoved(getLoadingItemPosition());
+        notifyItemRemoved(getLoadingItemPosition() + 1);
         showLoadMore = false;
     }
 
     public int getLoadingItemPosition() {
-        if (showLoadMore) {
-            return getItemCount() - 1;
-        }
-        return RecyclerView.NO_POSITION;
+        return showLoadMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    private void bindViewHolders(ViewHolder holder, int position) {
+    private void bindViewHolders(final ViewHolder holder, final int position) {
         int[] array = new int[]{
                 R.color.accent,
                 R.color.primary_text
         };
 
-        if (position % 3 == 0) {
-            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
-        } else {
-            holder.mImageView.setBackground(mContext.getDrawable(R.color.icons));
-        }
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -120,20 +120,29 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable>
                             target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if (resource instanceof GifDrawable) {
+                            holder.mImageView.setForeground(gifBadge);
+                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
+                        }
                         return false;
                     }
                 })
                 .override(800, 600)
-                .crossFade()
+                .placeholder(new ColorDrawable(array[1]))
                 //.into(holder.mImageView);
                 .into(new GlideDrawableImageViewTarget(holder.mImageView) {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable>
                             animation) {
                         super.onResourceReady(resource, animation);
-                        resource.stop();
+//                        resource.stop();
                     }
                 });
+        if (position % 3 == 0) {
+            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
+        } else {
+            holder.mImageView.setBackground(mContext.getDrawable(R.color.divider));
+        }
 
     }
 
@@ -151,7 +160,14 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finishLoading();
+                    if (mImageView.getDrawable() instanceof GifDrawable) {
+                        gif = (GifDrawable) mImageView.getDrawable();
+                        if (gif.isRunning()) {
+                            gif.stop();
+                        } else {
+                            gif.start();
+                        }
+                    }
                 }
             });
         }
