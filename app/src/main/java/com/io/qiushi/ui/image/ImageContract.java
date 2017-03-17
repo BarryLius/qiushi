@@ -19,7 +19,9 @@ public interface ImageContract {
 
         void setLoaded();
 
-        void noNetwork();
+        void networkError();
+
+        void serverError();
 
         void setData(List<Image> list);
     }

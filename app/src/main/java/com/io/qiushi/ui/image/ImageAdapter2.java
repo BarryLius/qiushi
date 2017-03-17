@@ -83,16 +83,26 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    /**
+     * add loading
+     */
     public void startLoading() {
-        if (showLoadMore)
+        //prevent duplication insret loading view
+        if (showLoadMore) {
             return;
+        }
         showLoadMore = true;
         notifyItemInserted(getLoadingItemPosition());
     }
 
+    /**
+     * remove loading
+     */
     public void finishLoading() {
-        if (!showLoadMore)
+        //prevent duplication remove loading view
+        if (!showLoadMore) {
             return;
+        }
         notifyItemRemoved(getLoadingItemPosition() + 1);
         showLoadMore = false;
     }
