@@ -46,28 +46,30 @@ public class ImagePresenter implements ImageContract.Presenter {
         if (page == 1) {
             mView.setLoading();
         }
-        NetworkUtils.getInstance()
+        //TODO need add cancel call
+        Call<String> call = NetworkUtils.getInstance()
                 .create(ApiService.class)
-                .getImageData(page)
-                .enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.e("图片json", ">>" + new Gson().toJson(response.body()));
-                        if (response.isSuccessful()) {
-                            List<Image> list = string2Object(response.body().toString());
-                            mView.setData(list);
-                        } else {
-                            mView.serverError();
-                        }
-                        mView.setLoaded();
-                    }
+                .getImageData(page);
 
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        mView.serverError();
-                        mView.setLoaded();
-                    }
-                });
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.e("图片json", ">>" + new Gson().toJson(response.body()));
+                if (response.isSuccessful()) {
+                    List<Image> list = string2Object(response.body().toString());
+                    mView.setData(list);
+                } else {
+                    mView.serverError();
+                }
+                mView.setLoaded();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                mView.serverError();
+                mView.setLoaded();
+            }
+        });
     }
 
     @Override

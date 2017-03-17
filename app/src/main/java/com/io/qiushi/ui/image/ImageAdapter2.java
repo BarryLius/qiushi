@@ -2,15 +2,17 @@ package com.io.qiushi.ui.image;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -122,7 +124,6 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             holder.mImageView.setBackground(mContext.getDrawable(array[1]));
         }
-
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -132,13 +133,15 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         return false;
                     }
 
-                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable>
                             target, boolean isFromMemoryCache, boolean isFirstResource) {
                         if (resource instanceof GifDrawable) {
-                            holder.mImageView.setForeground(gifBadge);
-                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
+//                            holder.mImageView.setForeground(gifBadge);
+//                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
+                            holder.tv.setVisibility(View.VISIBLE);
+                        } else {
+                            holder.tv.setVisibility(View.GONE);
                         }
                         return false;
                     }
@@ -152,8 +155,26 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             animation) {
                         super.onResourceReady(resource, animation);
 //                        resource.stop();
+                        holder.mImageView.setImageDrawable(resource);
                     }
                 });
+
+        holder.mImageView.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                Drawable drawable = holder.mImageView.getDrawable();
+                if (drawable instanceof GifDrawable) {
+                    gif = (GifDrawable) drawable;
+                    if (gif.isRunning()) {
+                        gif.stop();
+                    } else {
+                        gif.start();
+                    }
+                    Log.e("is gif", "");
+                }
+            }
+        });
 
     }
 
@@ -163,24 +184,12 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
+        TextView tv;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.image);
-
-            mImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mImageView.getDrawable() instanceof GifDrawable) {
-                        gif = (GifDrawable) mImageView.getDrawable();
-                        if (gif.isRunning()) {
-                            gif.stop();
-                        } else {
-                            gif.start();
-                        }
-                    }
-                }
-            });
+            tv = (TextView) itemView.findViewById(R.id.tv);
         }
     }
 

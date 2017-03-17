@@ -68,8 +68,9 @@ public class LoadMoreRecyclerView extends RecyclerView {
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
 
-        if (dy < 0 || isLoading)
+        if (dy < 0 || isLoading) {
             return;
+        }
         if (getLayoutManager() != null && getLayoutManager() instanceof GridLayoutManager) {
             GridLayoutManager mGridLayoutManager = (GridLayoutManager) layout;
 

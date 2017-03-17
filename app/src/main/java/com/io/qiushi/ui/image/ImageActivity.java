@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
+import com.io.qiushi.ui.commom.adapter.SlideInItemAnimator;
+import com.io.qiushi.util.NetUtils;
 import com.io.qiushi.widget.LoadMoreRecyclerView;
 
 import java.util.ArrayList;
@@ -60,6 +63,18 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         gridLayoutManager = new GridLayoutManager(mContext, RV_COLUMN);
         rvData.setLayoutManager(gridLayoutManager);
         rvData.setOnLoadMoreListener(this);
+        rvData.setItemAnimator(new SlideInItemAnimator());
+        rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (gridLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+                    toolbar.setTranslationZ(0f);
+                } else {
+                    toolbar.setTranslationZ(10f);
+                }
+            }
+        });
     }
 
     private void initData() {
@@ -92,6 +107,10 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     @Override
     public void onLoadMore() {
+        if (!NetUtils.isNetworkAvailable(mContext)) {
+            networkError();
+            return;
+        }
         adapter.startLoading();
 
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
