@@ -80,7 +80,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                             holder.mImageView.setForeground(gifBadge);
                             holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
                         }
-
                         return false;
                     }
                 })
@@ -96,6 +95,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                     }
                 });
     }
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;

@@ -1,6 +1,7 @@
 package com.io.qiushi.ui.image;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -23,6 +23,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
+import com.io.qiushi.ui.imagedetails.ImageDetailsActivity;
 import com.io.qiushi.util.GifBadge;
 
 import java.util.List;
@@ -139,9 +140,9 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         if (resource instanceof GifDrawable) {
 //                            holder.mImageView.setForeground(gifBadge);
 //                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
-                            holder.tv.setVisibility(View.VISIBLE);
+//                            holder.tv.setVisibility(View.VISIBLE);
                         } else {
-                            holder.tv.setVisibility(View.GONE);
+//                            holder.tv.setVisibility(View.GONE);
                         }
                         return false;
                     }
@@ -173,6 +174,10 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                     Log.e("is gif", "");
                 }
+                //
+                Intent intent=new Intent(mContext, ImageDetailsActivity.class);
+                intent.putExtra("url",list.get(position).getSrc());
+                mContext.startActivity(intent);
             }
         });
 
@@ -184,12 +189,12 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
-        TextView tv;
+//        TextView tv;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.image);
-            tv = (TextView) itemView.findViewById(R.id.tv);
+//            tv = (TextView) itemView.findViewById(R.id.tv);
         }
     }
 
