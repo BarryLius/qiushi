@@ -97,6 +97,11 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     }
 
     @Override
+    public void noMoreData() {
+
+    }
+
+    @Override
     public void onRefresh() {
         rvData.setFinishLoading();
         tempList = new ArrayList<>();

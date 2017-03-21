@@ -1,33 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+
+<ImageView
+    android:id="@+id/image"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="140dp"
-    >
+    android:layout_weight="1"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+    android:scaleType="centerCrop"
+    android:stateListAnimator="@animator/touch_raise"/>
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_weight="1"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerCrop"
-        android:stateListAnimator="@animator/touch_raise"
-        />
-
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:paddingBottom="3dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="3dp"
-        android:text="GIF"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:visibility="gone"/>
-</FrameLayout>
 
