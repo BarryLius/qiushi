@@ -58,6 +58,8 @@ public class ImagePresenter implements ImageContract.Presenter {
                 if (response.isSuccessful()) {
                     List<Image> list = string2Object(response.body().toString());
                     mView.setData(list);
+                } else if (response.code() == 404) {
+                    mView.noMoreData();
                 } else {
                     mView.serverError();
                 }

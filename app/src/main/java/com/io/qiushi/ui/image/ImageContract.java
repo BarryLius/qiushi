@@ -24,6 +24,9 @@ public interface ImageContract {
         void serverError();
 
         void setData(List<Image> list);
+
+        void noMoreData();
+
     }
 
     interface Presenter extends BasePresenter {
