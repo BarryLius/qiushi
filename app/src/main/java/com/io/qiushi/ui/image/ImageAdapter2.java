@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -139,9 +138,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         if (resource instanceof GifDrawable) {
 //                            holder.mImageView.setForeground(gifBadge);
 //                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
-                            holder.tv.setVisibility(View.VISIBLE);
                         } else {
-                            holder.tv.setVisibility(View.GONE);
                         }
                         return false;
                     }
@@ -184,12 +181,10 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
-        TextView tv;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.image);
-            tv = (TextView) itemView.findViewById(R.id.tv);
         }
     }
 
