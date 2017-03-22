@@ -8,11 +8,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
+import com.io.qiushi.ui.commom.adapter.OnItemClicklistener;
 import com.io.qiushi.ui.commom.adapter.SlideInItemAnimator;
 import com.io.qiushi.util.NetUtils;
 import com.io.qiushi.widget.LoadMoreRecyclerView;
@@ -24,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ImageActivity extends AppCompatActivity implements ImageContract.View, SwipeRefreshLayout
-        .OnRefreshListener, LoadMoreRecyclerView.OnLoadMoreListener {
+        .OnRefreshListener, LoadMoreRecyclerView.OnLoadMoreListener, OnItemClicklistener {
     private static final String TAG = "ImageActivity";
     private final int RV_COLUMN = 2;
 
@@ -60,6 +62,7 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     private void initView() {
         srlRefresh.setOnRefreshListener(this);
+        adapter.setOnItemClicklistener(this);
         gridLayoutManager = new GridLayoutManager(mContext, RV_COLUMN);
         rvData.setLayoutManager(gridLayoutManager);
         rvData.setOnLoadMoreListener(this);
@@ -94,6 +97,12 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
             adapter.notifyItemRangeInserted(adapter.getItemCount(), list.size());
             rvData.setFinishLoading();
         }
+    }
+
+    //adapter item click
+    @Override
+    public void OnItemClick(int position, View view) {
+
     }
 
     @Override
@@ -162,5 +171,4 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         adapter.finishLoading();
         rvData.setFinishLoading();
     }
-
 }

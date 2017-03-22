@@ -2,11 +2,9 @@ package com.io.qiushi.ui.image;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +20,7 @@ import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
+import com.io.qiushi.ui.commom.adapter.OnItemClicklistener;
 import com.io.qiushi.util.GifBadge;
 
 import java.util.List;
@@ -38,6 +37,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private boolean showLoadMore = false;
     GifBadge gifBadge;
     GifDrawable gif = null;
+    OnItemClicklistener mOnItemClicklistener;
 
     public ImageAdapter2(Context context, List<Image> list) {
         mContext = context;
@@ -160,15 +160,18 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                Drawable drawable = holder.mImageView.getDrawable();
-                if (drawable instanceof GifDrawable) {
-                    gif = (GifDrawable) drawable;
-                    if (gif.isRunning()) {
-                        gif.stop();
-                    } else {
-                        gif.start();
-                    }
-                    Log.e("is gif", "");
+//                Drawable drawable = holder.mImageView.getDrawable();
+//                if (drawable instanceof GifDrawable) {
+//                    gif = (GifDrawable) drawable;
+//                    if (gif.isRunning()) {
+//                        gif.stop();
+//                    } else {
+//                        gif.start();
+//                    }
+//                    Log.e("is gif", "");
+//                }
+                if (mOnItemClicklistener != null) {
+                    mOnItemClicklistener.OnItemClick(position, v);
                 }
             }
         });
@@ -177,6 +180,10 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void bindLoadingHolder(LoadingMoreHolder holder, int position) {
         holder.progress.setVisibility(View.VISIBLE);
+    }
+
+    public void setOnItemClicklistener(OnItemClicklistener mOnItemClicklistener) {
+        this.mOnItemClicklistener = mOnItemClicklistener;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
