@@ -15,6 +15,13 @@
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
 
+    <color name="black_1">#232323</color>
+    <color name="black_2">#222222</color>
+    <color name="black_3">#212121</color>
+    <color name="black_4">#202020</color>
+    <color name="black_5">#191919</color>
+    <color name="black_6">#000000</color>
+
     <array name="colors">
         <item>#202020</item>
         <item>#222222</item>

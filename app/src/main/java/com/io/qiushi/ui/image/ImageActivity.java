@@ -1,6 +1,7 @@
 package com.io.qiushi.ui.image;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.io.qiushi.R;
 import com.io.qiushi.bean.Image;
 import com.io.qiushi.ui.commom.adapter.OnItemClicklistener;
 import com.io.qiushi.ui.commom.adapter.SlideInItemAnimator;
+import com.io.qiushi.ui.imagedetails.ImageDetailsActivity;
 import com.io.qiushi.util.NetUtils;
 import com.io.qiushi.widget.LoadMoreRecyclerView;
 
@@ -62,7 +64,6 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     private void initView() {
         srlRefresh.setOnRefreshListener(this);
-        adapter.setOnItemClicklistener(this);
         gridLayoutManager = new GridLayoutManager(mContext, RV_COLUMN);
         rvData.setLayoutManager(gridLayoutManager);
         rvData.setOnLoadMoreListener(this);
@@ -97,12 +98,17 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
             adapter.notifyItemRangeInserted(adapter.getItemCount(), list.size());
             rvData.setFinishLoading();
         }
+        adapter.setOnItemClicklistener(this);
     }
 
-    //adapter item click
     @Override
     public void OnItemClick(int position, View view) {
-
+        if (tempList == null || tempList.isEmpty()) {
+            return;
+        }
+        Intent intent = new Intent(ImageActivity.this, ImageDetailsActivity.class);
+        intent.putExtra("url", tempList.get(position).getSrc());
+        startActivity(intent);
     }
 
     @Override
@@ -171,4 +177,5 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         adapter.finishLoading();
         rvData.setFinishLoading();
     }
+
 }

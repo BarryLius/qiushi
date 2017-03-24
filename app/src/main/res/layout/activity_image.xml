@@ -16,11 +16,6 @@
         app:title="图片"
         app:titleTextColor="@color/secondary_text"/>
 
-    <com.io.qiushi.widget.BadgedImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@mipmap/ic_launcher"/>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

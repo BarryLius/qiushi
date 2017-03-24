@@ -24,6 +24,7 @@ import com.io.qiushi.ui.commom.adapter.OnItemClicklistener;
 import com.io.qiushi.util.GifBadge;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by liuwei on 17/3/15.
@@ -35,6 +36,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context mContext;
     private List<Image> list;
     private boolean showLoadMore = false;
+    private final ColorDrawable[] loadingBackground;
     GifBadge gifBadge;
     GifDrawable gif = null;
     OnItemClicklistener mOnItemClicklistener;
@@ -43,6 +45,12 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         mContext = context;
         this.list = list;
         gifBadge = new GifBadge(mContext);
+
+        int[] colors = mContext.getResources().getIntArray(R.array.colors);
+        loadingBackground = new ColorDrawable[colors.length];
+        for (int i = 0; i < colors.length; i++) {
+            loadingBackground[i] = new ColorDrawable(colors[i]);
+        }
     }
 
     @Override
@@ -112,17 +120,14 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return showLoadMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    private void bindViewHolders(final ViewHolder holder, final int position) {
-        int[] array = new int[]{
-                R.color.black,
-                R.color.divider
-        };
+    public int getRandom(int min, int max) {
+        Random random = new Random();
+        int s = random.nextInt(max) % (max - min + 1) + min;
+        return s;
+    }
 
-        if (position % 3 == 0) {
-            holder.mImageView.setBackground(mContext.getDrawable(array[0]));
-        } else {
-            holder.mImageView.setBackground(mContext.getDrawable(array[1]));
-        }
+    private void bindViewHolders(final ViewHolder holder, final int position) {
+        holder.mImageView.setBackground(loadingBackground[position % loadingBackground.length]);
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -144,7 +149,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                 })
                 .override(800, 600)
-                .placeholder(new ColorDrawable(array[0]))
+                .placeholder(loadingBackground[position % loadingBackground.length])
                 .crossFade()
                 .into(new GlideDrawableImageViewTarget(holder.mImageView) {
                     @Override
