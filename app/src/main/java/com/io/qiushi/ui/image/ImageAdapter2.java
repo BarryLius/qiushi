@@ -2,8 +2,6 @@ package com.io.qiushi.ui.image;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -127,7 +126,6 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void bindViewHolders(final ViewHolder holder, final int position) {
-        holder.mImageView.setBackground(loadingBackground[position % loadingBackground.length]);
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -150,7 +148,9 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 })
                 .override(800, 600)
                 .placeholder(loadingBackground[position % loadingBackground.length])
+                .error(R.mipmap.ic_launcher)
                 .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new GlideDrawableImageViewTarget(holder.mImageView) {
                     @Override
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable>
@@ -161,8 +161,8 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                 });
 
+        holder.mImageView.setBackground(loadingBackground[position % loadingBackground.length]);
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
 //                Drawable drawable = holder.mImageView.getDrawable();

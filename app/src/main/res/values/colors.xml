@@ -22,12 +22,20 @@
     <color name="black_5">#191919</color>
     <color name="black_6">#000000</color>
 
+    <!--<array name="colors">-->
+    <!--<item>#202020</item>-->
+    <!--<item>#222222</item>-->
+    <!--<item>#191919</item>-->
+    <!--<item>#212121</item>-->
+    <!--<item>#232323</item>-->
+    <!--<item>#000000</item>-->
+    <!--</array>-->
     <array name="colors">
-        <item>#202020</item>
-        <item>#222222</item>
-        <item>#191919</item>
-        <item>#212121</item>
         <item>#232323</item>
+        <item>#222222</item>
+        <item>#212121</item>
+        <item>#202020</item>
+        <item>#191919</item>
         <item>#000000</item>
     </array>
 </resources>
