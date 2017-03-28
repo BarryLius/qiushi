@@ -8,6 +8,15 @@ import java.io.Serializable;
 
 public class Image implements Serializable {
     private String src;
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getSrc() {
         return src;

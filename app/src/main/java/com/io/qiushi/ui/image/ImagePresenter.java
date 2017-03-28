@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,22 +77,43 @@ public class ImagePresenter implements ImageContract.Presenter {
 
     @Override
     public List<Image> string2Object(@NonNull String msg) {
+        String pattern = "(http|htttps)://wx[0-9a-zA-Z].sinaimg.cn/mw[0-9]{3}/[0-9a-zA-Z]{32}.(jpg|gif)";
+
         List<Image> list = new ArrayList<>();
         if (!TextUtils.isEmpty(msg)) {
             Document doc = Jsoup.parse(msg);
-            Elements ele = doc.select("div.main").select("img");
-            for (int i = 0; i < ele.size(); i++) {
-//                if (i % 4 == 3) {
+//            //标题
+//            Elements eleTitleText = doc.select("div.top").select("h2").select("a");
+//            //图片
+//            Elements eleImageSrc = doc.select("div.main").select("img");
+//
+//            for (int i = 0; i < eleImageSrc.size(); i++) {
+//                String src = eleImageSrc.get(i).attr("src");
+//                boolean isMatch = Pattern.matches(pattern, src);
+//                if (isMatch) {
 //                    Image image = new Image();
-//                    image.setSrc(ele.get(i).attr("src"));
+//                    image.setSrc(src);
 //                    list.add(image);
 //                }
-                if (!ele.get(i).attr("src").contains("1x1.trans.gif")) {
-                    Image image = new Image();
-                    image.setSrc(ele.get(i).attr("src"));
-                    list.add(image);
+//            }
+            Elements el = doc.select("div.panel");
+            for (int i = 0; i < el.size(); i++) {
+                //标题
+                String title = el.get(i).select("div.top").select("h2").select("a").text();
+                //图片list
+                Elements srcList = el.get(i).select("div.main").select("img");
+
+                for (int j = 0; j < srcList.size(); j++) {
+                    boolean isMatch = Pattern.matches(pattern, srcList.get(j).attr("src"));
+                    if (isMatch) {
+                        Image a = new Image();
+                        a.setTitle(title);
+                        a.setSrc(srcList.get(j).attr("src"));
+                        list.add(a);
+                    }
                 }
             }
+
         }
         return list;
     }

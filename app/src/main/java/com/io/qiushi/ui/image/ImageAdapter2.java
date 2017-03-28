@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -23,7 +24,6 @@ import com.io.qiushi.ui.commom.adapter.OnItemClicklistener;
 import com.io.qiushi.util.GifBadge;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by liuwei on 17/3/15.
@@ -119,13 +119,9 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return showLoadMore ? getItemCount() - 1 : RecyclerView.NO_POSITION;
     }
 
-    public int getRandom(int min, int max) {
-        Random random = new Random();
-        int s = random.nextInt(max) % (max - min + 1) + min;
-        return s;
-    }
-
     private void bindViewHolders(final ViewHolder holder, final int position) {
+        holder.title.setText(list.get(position).getTitle() == null ? "" : list.get(position).getTitle());
+
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
                 .listener(new RequestListener<String, GlideDrawable>() {
@@ -193,10 +189,12 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
+        TextView title;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.image);
+            title = (TextView) itemView.findViewById(R.id.title);
         }
     }
 
