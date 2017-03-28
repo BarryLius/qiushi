@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +48,7 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     ImageAdapter2 adapter;
     GridLayoutManager gridLayoutManager;
+    StaggeredGridLayoutManager mStaggeredGridLayoutManager;
 
     private List<Image> tempList = new ArrayList<>();
 
@@ -65,18 +67,18 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
     private void initView() {
         srlRefresh.setOnRefreshListener(this);
         gridLayoutManager = new GridLayoutManager(mContext, RV_COLUMN);
-        rvData.setLayoutManager(gridLayoutManager);
+        mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        rvData.setLayoutManager(mStaggeredGridLayoutManager);
+//        rvData.setLayoutManager(gridLayoutManager);
         rvData.setOnLoadMoreListener(this);
         rvData.setItemAnimator(new SlideInItemAnimator());
+
+        mStaggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         rvData.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (gridLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
-                    toolbar.setTranslationZ(0f);
-                } else {
-                    toolbar.setTranslationZ(10f);
-                }
+                mStaggeredGridLayoutManager.invalidateSpanAssignments();
             }
         });
     }
@@ -133,15 +135,15 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         }
         adapter.startLoading();
 
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if (position == adapter.getLoadingItemPosition()) {
-                    return RV_COLUMN;
-                }
-                return 1;
-            }
-        });
+//        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//                if (position == adapter.getLoadingItemPosition()) {
+//                    return RV_COLUMN;
+//                }
+//                return 1;
+//            }
+//        });
 
         page++;
         mPresenter.getData(page);

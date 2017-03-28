@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -120,7 +121,6 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void bindViewHolders(final ViewHolder holder, final int position) {
-        holder.title.setText(list.get(position).getTitle() == null ? "" : list.get(position).getTitle());
 
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
@@ -142,7 +142,7 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         return false;
                     }
                 })
-                .override(800, 600)
+//                .override(800, 600)
                 .placeholder(loadingBackground[position % loadingBackground.length])
                 .error(R.mipmap.ic_launcher)
                 .crossFade()
@@ -153,7 +153,13 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             animation) {
                         super.onResourceReady(resource, animation);
 //                        resource.stop();
+                        ViewGroup.LayoutParams para = holder.mImageView.getLayoutParams();
+                        para.height = resource.getIntrinsicWidth();
+                        para.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        holder.mImageView.setLayoutParams(para);
                         holder.mImageView.setImageDrawable(resource);
+
+                        holder.title.setText(list.get(position).getTitle() == null ? "" : list.get(position).getTitle());
                     }
                 });
 

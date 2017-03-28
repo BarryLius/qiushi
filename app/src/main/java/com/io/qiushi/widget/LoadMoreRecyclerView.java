@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 
 
@@ -64,6 +65,17 @@ public class LoadMoreRecyclerView extends RecyclerView {
         return null;
     }
 
+    public LayoutManager getLayout() {
+        if (layout instanceof GridLayoutManager) {
+            return (GridLayoutManager) layout;
+        } else if (layout instanceof LinearLayoutManager) {
+            return (LinearLayoutManager) layout;
+        } else if (layout instanceof StaggeredGridLayoutManager) {
+            return (StaggeredGridLayoutManager) layout;
+        }
+        return null;
+    }
+
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
@@ -88,6 +100,23 @@ public class LoadMoreRecyclerView extends RecyclerView {
             }
         } else if (getLayoutManager() != null && getLayoutManager() instanceof LinearLayoutManager) {
             //TODO LinearLayout load more
+        } else if (getLayout() != null && getLayout() instanceof StaggeredGridLayoutManager) {
+            StaggeredGridLayoutManager mStaggeredGridLayoutManager = (StaggeredGridLayoutManager) layout;
+
+            int visibleItemCount = this.getChildCount();
+            int totalItemCount = mStaggeredGridLayoutManager.getItemCount();
+            int[] i = {0,1,2};
+            int[] firstVisibleItem = mStaggeredGridLayoutManager.findFirstVisibleItemPositions(i);
+
+            if ((totalItemCount - visibleItemCount) <= (firstVisibleItem[0])) {
+                if (!isLoading) {
+                    isLoading = true;
+                    if (mOnLoadMoreListener != null) {
+                        mOnLoadMoreListener.onLoadMore();
+                    }
+                }
+            }
+
         }
     }
 
