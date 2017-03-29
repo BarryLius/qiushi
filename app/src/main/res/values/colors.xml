@@ -14,6 +14,12 @@
     <color name="divider">#BDBDBD</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="background_dark">#ff333333</color>
+
+    <color name="text_disabled_light">#4dffffff</color> <!-- 30% -->
+    <color name="text_primary_light">#ffffffff</color>
+
+
 
     <color name="black_1">#232323</color>
     <color name="black_2">#222222</color>

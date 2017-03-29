@@ -1,7 +1,5 @@
 package com.io.qiushi.util;
 
-import com.io.qiushi.api.ApiService;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -14,19 +12,19 @@ public class NetworkUtils {
     private static NetworkUtils instance;
     private Retrofit mRetrofit;
 
-    public NetworkUtils() {
+    public NetworkUtils(String url) {
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(ApiService.API_URL)
+                .baseUrl(url)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
-    public static NetworkUtils getInstance() {
+    public static NetworkUtils getInstance(String url) {
         if (instance == null) {
             synchronized (NetworkUtils.class) {
                 if (instance == null) {
-                    instance = new NetworkUtils();
+                    instance = new NetworkUtils(url);
                 }
             }
         }

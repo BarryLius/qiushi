@@ -99,13 +99,27 @@ public class LoadMoreRecyclerView extends RecyclerView {
                 }
             }
         } else if (getLayoutManager() != null && getLayoutManager() instanceof LinearLayoutManager) {
-            //TODO LinearLayout load more
+            LinearLayoutManager mLayoutManager = (LinearLayoutManager) layout;
+
+            int visibleItemCount = this.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+            if ((totalItemCount - visibleItemCount) <= (firstVisibleItem)) {
+                if (!isLoading) {
+                    isLoading = true;
+                    if (mOnLoadMoreListener != null) {
+                        mOnLoadMoreListener.onLoadMore();
+                    }
+                }
+            }
+
         } else if (getLayout() != null && getLayout() instanceof StaggeredGridLayoutManager) {
             StaggeredGridLayoutManager mStaggeredGridLayoutManager = (StaggeredGridLayoutManager) layout;
 
             int visibleItemCount = this.getChildCount();
             int totalItemCount = mStaggeredGridLayoutManager.getItemCount();
-            int[] i = {0,1,2};
+            int[] i = {0, 1, 2};
             int[] firstVisibleItem = mStaggeredGridLayoutManager.findFirstVisibleItemPositions(i);
 
             if ((totalItemCount - visibleItemCount) <= (firstVisibleItem[0])) {

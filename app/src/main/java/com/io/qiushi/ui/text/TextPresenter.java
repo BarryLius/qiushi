@@ -1,13 +1,11 @@
-package com.io.qiushi.ui.image;
+package com.io.qiushi.ui.text;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.io.qiushi.api.ApiService;
-import com.io.qiushi.bean.Image;
+import com.io.qiushi.bean.Text;
 import com.io.qiushi.util.NetUtils;
 import com.io.qiushi.util.NetworkUtils;
 
@@ -17,23 +15,22 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by mhl on 2017/3/15.
+ * Created by mhl on 2017/3/29.
  */
 
-public class ImagePresenter implements ImageContract.Presenter {
+public class TextPresenter implements TextContract.Presenter {
     private Context mContext;
-    private ImageContract.View mView;
+    private TextContract.View mView;
 
-    public ImagePresenter(Context mContext, ImageContract.View mView) {
-        this.mContext = mContext;
-        this.mView = mView;
+    public TextPresenter(Context context, TextContract.View view) {
+        mContext = context;
+        mView = view;
         mView.setPresenter(this);
     }
 
@@ -47,17 +44,16 @@ public class ImagePresenter implements ImageContract.Presenter {
         if (page == 1) {
             mView.setLoading();
         }
-        //TODO need add cancel call
+
         Call<String> call = NetworkUtils.getInstance(ApiService.API_QIUMEIMEI_URL)
                 .create(ApiService.class)
-                .getImageData(page);
+                .getTextData(page);
 
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.e("图片json", ">>" + new Gson().toJson(response.body()));
                 if (response.isSuccessful()) {
-                    List<Image> list = string2Object(response.body().toString());
+                    List<Text> list = string2Object(response.body().toString());
                     mView.setData(list);
                 } else if (response.code() == 404) {
                     mView.noMoreData();
@@ -76,28 +72,21 @@ public class ImagePresenter implements ImageContract.Presenter {
     }
 
     @Override
-    public List<Image> string2Object(@NonNull String msg) {
-        String pattern = "(http|htttps)://wx[0-9a-zA-Z].sinaimg.cn/mw[0-9]{3}/[0-9a-zA-Z]{32}.(jpg|gif)";
-
-        List<Image> list = new ArrayList<>();
+    public List<Text> string2Object(@NonNull String msg) {
+        List<Text> list = new ArrayList<>();
         if (!TextUtils.isEmpty(msg)) {
             Document doc = Jsoup.parse(msg);
             Elements el = doc.select("div.panel");
             for (int i = 0; i < el.size(); i++) {
-                //标题
-                String title = el.get(i).select("div.top").select("h2").select("a").text();
-                //图片list
-                Elements srcList = el.get(i).select("div.main").select("img");
+                String title = el.select("div.top").get(i).select("h2").select("a").text();
+                String time = el.select("div.top").get(i).select("time").text();
+                String content = el.select("div.main").get(i).select("p").text();
 
-                for (int j = 0; j < srcList.size(); j++) {
-                    boolean isMatch = Pattern.matches(pattern, srcList.get(j).attr("src"));
-                    if (isMatch) {
-                        Image a = new Image();
-                        a.setTitle(title);
-                        a.setSrc(srcList.get(j).attr("src"));
-                        list.add(a);
-                    }
-                }
+                Text text = new Text();
+                text.setTitle(title);
+                text.setTime(time);
+                text.setContent(content);
+                list.add(text);
             }
 
         }

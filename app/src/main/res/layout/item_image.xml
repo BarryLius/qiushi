@@ -22,7 +22,8 @@
         android:layout_gravity="bottom"
         android:background="#55ffffff"
         android:padding="2dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        />
 </FrameLayout>
 
 

@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 
 public interface ApiService {
     //
-    public static final String API_URL = "http://www.qiumeimei.com/";
+    public static final String API_QIUMEIMEI_URL = "http://www.qiumeimei.com/";
 
     /**
      * 获取[图片]数据

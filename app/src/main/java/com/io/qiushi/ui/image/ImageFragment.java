@@ -3,14 +3,14 @@ package com.io.qiushi.ui.image;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,14 +28,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageActivity extends AppCompatActivity implements ImageContract.View, SwipeRefreshLayout
-        .OnRefreshListener, LoadMoreRecyclerView.OnLoadMoreListener, OnItemClicklistener {
-    private static final String TAG = "ImageActivity";
+
+public class ImageFragment extends Fragment implements ImageContract.View, SwipeRefreshLayout.OnRefreshListener,
+        LoadMoreRecyclerView.OnLoadMoreListener, OnItemClicklistener {
+    private View rootView;
     private final int RV_COLUMN = 2;
 
     private Context mContext;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.srl_refresh)
     SwipeRefreshLayout srlRefresh;
     @BindView(R.id.rv_data)
@@ -52,16 +51,49 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     private List<Image> tempList = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image);
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
-        mContext = this;
-        ButterKnife.bind(this);
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+
+    public ImageFragment() {
+        // Required empty public constructor
+    }
+
+    public static ImageFragment newInstance(String param1, String param2) {
+        ImageFragment fragment = new ImageFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        rootView = inflater.inflate(R.layout.fragment_image, container, false);
+        mContext = getContext();
+        ButterKnife.bind(this, rootView);
         mPresenter = new ImagePresenter(mContext, this);
         initView();
         initData();
+        return rootView;
     }
 
     private void initView() {
@@ -91,7 +123,6 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
     @Override
     public void setData(List<Image> list) {
-        Log.e(TAG, "size>>" + list.size());
         tempList.addAll(list);
         if (adapter.getItemCount() <= 0) {
             adapter = new ImageAdapter2(mContext, tempList);
@@ -108,14 +139,9 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
         if (tempList == null || tempList.isEmpty()) {
             return;
         }
-        Intent intent = new Intent(ImageActivity.this, ImageDetailsActivity.class);
+        Intent intent = new Intent(getActivity(), ImageDetailsActivity.class);
         intent.putExtra("url", tempList.get(position).getSrc());
         startActivity(intent);
-    }
-
-    @Override
-    public void noMoreData() {
-
     }
 
     @Override
@@ -148,7 +174,16 @@ public class ImageActivity extends AppCompatActivity implements ImageContract.Vi
 
         page++;
         mPresenter.getData(page);
-        Log.e(TAG, "page= " + page);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void noMoreData() {
+
     }
 
     @Override

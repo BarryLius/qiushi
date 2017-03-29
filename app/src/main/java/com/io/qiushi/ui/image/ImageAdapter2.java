@@ -3,6 +3,7 @@ package com.io.qiushi.ui.image;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,6 +122,8 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void bindViewHolders(final ViewHolder holder, final int position) {
+        holder.title.setText("");
+        holder.mImageView.setBackground(loadingBackground[position % loadingBackground.length]);
 
         Glide.with(mContext)
                 .load(list.get(position).getSrc())
@@ -135,8 +138,6 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable>
                             target, boolean isFromMemoryCache, boolean isFirstResource) {
                         if (resource instanceof GifDrawable) {
-//                            holder.mImageView.setForeground(gifBadge);
-//                            holder.mImageView.setForegroundGravity(Gravity.RIGHT | Gravity.BOTTOM);
                         } else {
                         }
                         return false;
@@ -159,24 +160,14 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         holder.mImageView.setLayoutParams(para);
                         holder.mImageView.setImageDrawable(resource);
 
-                        holder.title.setText(list.get(position).getTitle() == null ? "" : list.get(position).getTitle());
+                        holder.title.setText(list.get(position).getTitle() == null ? "" : list.get(position).getTitle
+                                ());
                     }
                 });
 
-        holder.mImageView.setBackground(loadingBackground[position % loadingBackground.length]);
         holder.mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Drawable drawable = holder.mImageView.getDrawable();
-//                if (drawable instanceof GifDrawable) {
-//                    gif = (GifDrawable) drawable;
-//                    if (gif.isRunning()) {
-//                        gif.stop();
-//                    } else {
-//                        gif.start();
-//                    }
-//                    Log.e("is gif", "");
-//                }
                 if (mOnItemClicklistener != null) {
                     mOnItemClicklistener.OnItemClick(position, v);
                 }
@@ -186,7 +177,10 @@ public class ImageAdapter2 extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void bindLoadingHolder(LoadingMoreHolder holder, int position) {
-        holder.progress.setVisibility(View.VISIBLE);
+        //set loading more layout is single line
+        StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) holder.itemView
+                .getLayoutParams();
+        p.setFullSpan(true);
     }
 
     public void setOnItemClicklistener(OnItemClicklistener mOnItemClicklistener) {
